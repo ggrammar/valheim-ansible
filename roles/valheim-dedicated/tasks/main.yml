@@ -1,0 +1,30 @@
+- name: Create a directory to install valheim
+  file:
+          path: /steam/games/valheim
+          state: directory
+          owner: steam
+          group: steam
+          mode: 0700
+
+- name: Check to see if Valheim is already installed.
+  stat:
+          path: /steam/games/valheim/start_server.sh
+  register: valheim_installed
+
+- name: Install valheim
+  command:
+          cmd: "/steam/steamcmd.sh +login anonymous +force_install_dir /steam/games/valheim +app_update 896660 validate +exit"
+  when:
+          - valheim_installed is defined
+          - not valheim_installed.stat.isreg
+
+- name: Create systemd unit file for Valheim
+  copy:
+          src: valheim.service
+          dest: /etc/systemd/system/valheim.service
+          owner: root
+          group: root
+          mode: 0644
+  notify:
+          - daemon-reload
+          - restart-valheim

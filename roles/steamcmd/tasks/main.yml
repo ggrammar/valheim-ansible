@@ -1,0 +1,43 @@
+- name: Create steam user
+  user:
+          name: steam
+
+          # TODO: add-apt-repository multiverse
+
+          # TODO: needs interactive accept of steamcmd license
+          # - name: Install steamcmd from repo
+          # apt:
+          # name: [steamcmd, lib32gcc1]
+          # state: present
+
+# TODO: support for specifying a disk?
+- name: Create directories for steamcmd and any games we install. 
+  file:
+          path: "{{ item }}"
+          state: directory
+  with_items:
+          - "/steam"
+          - "/steam/games"
+
+- name: Check to see if we need to download updates for steamcmd.
+  stat:
+          path: /steam/steamcmd.sh
+  register: steamcmd_is_installed
+
+- name: Download the latest steamcmd executable. 
+  unarchive:
+          src: https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
+          remote_src: yes
+          dest: /steam/
+  when:
+          - steamcmd_is_installed.stat.isreg is defined
+          - not steamcmd_is_installed.stat.isreg
+
+# TODO: launch steamcmd to get updates?
+# TODO: log in as a specific steam user? 
+# TODO: "SDL not found"?
+# TODO: set force_install_dir
+#
+- name: Launch steamcmd to get any updates. 
+  command:
+          cmd: "/steam/steamcmd.sh +login anonymous +exit"

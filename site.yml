@@ -1,0 +1,5 @@
+- name: Install steamcmd and valheim-dedicated
+  hosts: all
+  roles:
+          - steamcmd
+          - valheim-dedicated

@@ -1,0 +1,8 @@
+- name: daemon-reload
+  systemd:
+          daemon_reload: yes
+
+- name: restart-valheim
+  service:
+          name: valheim
+          state: restarted
