@@ -16,7 +16,8 @@
           cmd: "/steam/steamcmd.sh +login anonymous +force_install_dir /steam/games/valheim +app_update 896660 validate +exit"
   when:
           - valheim_installed is defined
-          - not valheim_installed.stat.isreg
+          - valheim_installed.stat is defined
+          - not valheim_installed.stat.exists
 
 - name: Create systemd unit file for Valheim
   copy:
@@ -28,3 +29,14 @@
   notify:
           - daemon-reload
           - restart-valheim
+
+# TODO: Template out start_server.sh with this port as a variable
+- name: Allow Valheim through the firewall
+  ufw:
+          rule: allow
+          port: '2456'
+  with_items:
+          - '2456'
+          - '2457'
+          - '2458'
+
