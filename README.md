@@ -10,3 +10,7 @@ This repo is a work in progress.
  - Create an "inventory" file that lists your servers, and the user that will connect. `server-name ansible_user=whoever`
  - Install steamcmd (manual step for now)
  - `ansible-playbook -i ./inventory ./site.yml`
+
+### TODO
+ - Variable support for name, world name, password
+ - Template out start\_server.sh, with port variable
