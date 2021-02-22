@@ -15,6 +15,9 @@
   file:
           path: "{{ item }}"
           state: directory
+          owner: steam
+          group: steam
+          mode: 0750 # owner can read, write, execute; group can read, execute; no world permissions
   with_items:
           - "/steam"
           - "/steam/games"
@@ -29,9 +32,13 @@
           src: https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz
           remote_src: yes
           dest: /steam/
+          owner: steam
+          group: steam
+          mode: 0540 # owner can read and execute, group can read, no world permissions
   when:
-          - steamcmd_is_installed.stat.isreg is defined
-          - not steamcmd_is_installed.stat.isreg
+          - steamcmd_is_installed is defined
+          - steamcmd_is_installed.stat is defined
+          - not steamcmd_is_installed.stat.exists
 
 # TODO: launch steamcmd to get updates?
 # TODO: log in as a specific steam user? 
@@ -39,5 +46,10 @@
 # TODO: set force_install_dir
 #
 - name: Launch steamcmd to get any updates. 
-  command:
-          cmd: "/steam/steamcmd.sh +login anonymous +exit"
+  ansible.builtin.command:
+          argv:
+                  - ./steamcmd.sh
+                  - +login
+                  - anonymous
+                  - +exit
+          chdir: /steam
