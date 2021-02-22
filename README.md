@@ -1,1 +1,12 @@
-trying to create an ansible role to install a valheim dedicated server
+# ansible-valheim
+
+Install a dedicated Valheim server with Ansible!
+
+Based on https://developer.valvesoftware.com/wiki/SteamCMD and https://gameplay.tips/guides/9765-valheim.html 
+
+This repo is a work in progress. 
+
+### How to Use
+ - Create an "inventory" file that lists your servers, and the user that will connect. `server-name ansible_user=whoever`
+ - Install steamcmd (manual step for now)
+ - `ansible-playbook -i ./inventory ./site.yml`
