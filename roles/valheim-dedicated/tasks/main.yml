@@ -1,3 +1,8 @@
+- name: Read in super-secret variables
+  include_vars:
+          file: secrets.yml
+          name: secrets
+
 - name: Create a directory to install valheim
   file:
           path: /steam/games/valheim
@@ -6,10 +11,12 @@
           group: steam
           mode: 0700
 
+
 - name: Check to see if Valheim is already installed.
   stat:
           path: /steam/games/valheim/start_server.sh
   register: valheim_installed
+
 
 - name: Install valheim
   command:
@@ -18,6 +25,17 @@
           - valheim_installed is defined
           - valheim_installed.stat is defined
           - not valheim_installed.stat.exists
+
+
+- name: Deploy our own copy of server_startup.sh
+  template:
+          src: start_server.sh
+          dest: /steam/games/valheim/start_server.sh
+          owner: steam
+          group: steam
+          mode: 0755
+  notify:
+          - restart-valheim
 
 - name: Create systemd unit file for Valheim
   copy:
@@ -30,11 +48,12 @@
           - daemon-reload
           - restart-valheim
 
+
 # TODO: Template out start_server.sh with this port as a variable
 - name: Allow Valheim through the firewall
   ufw:
           rule: allow
-          port: '2456'
+          port: "{{ item }}"
   with_items:
           - '2456'
           - '2457'
