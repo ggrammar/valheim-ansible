@@ -15,3 +15,4 @@ This repo is a work in progress.
 ### TODO
  - Variable support for name, world name, password
  - Template out start\_server.sh, with port variable
+ - Variable support for -savedir (defaults to steam user's home directory)
